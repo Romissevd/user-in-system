@@ -1,1 +1,15 @@
-Hello user!
+{% if name %}
+    Hello, {{ name }}!
+{% else %}
+    {% if error %}
+        {{ error }}
+    {% else %}
+        Hello, user!
+    {% endif %}
+{% endif %}
+<form action="" method="post">
+    {% csrf_token %}
+    <label form="email">Your email: </label>
+    <input id="email" type="text" name="email" value="">
+    <input type="submit" value="LogIn">
+</form>
