@@ -1,15 +1,27 @@
 {% if name %}
     Hello, {{ name }}!
 {% else %}
-    {% if error %}
-        {{ error }}
+    {% if form.errors %}
+        {% for error in form.errors  %}
+            <li>{{ error }}</li>
+        {% endfor %}
     {% else %}
         Hello, user!
     {% endif %}
 {% endif %}
-<form action="" method="post">
-    {% csrf_token %}
-    <label form="email">Your email: </label>
-    <input id="email" type="text" name="email" value="">
-    <input type="submit" value="LogIn">
-</form>
+{% if form %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="field">
+            {{ form.last_name.errors }}
+            <label id="id_last_name">Логин:</label>
+            {{ form.last_name }}
+        </div>
+        <div class="field">
+            {{ form.email.errors }}
+            <label id="id_email">Email:</label>
+            {{ form.email }}
+        </div>
+        <input type="submit" value="LogIn">
+    </form>
+{% endif %}
