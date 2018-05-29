@@ -12,3 +12,8 @@ class User(models.Model):
     def __str__(self):
 
         return self.email
+
+class UuidUser(models.Model):
+
+    user_uuid = models.OneToOneField(User, on_delete=models.CASCADE)
+    uuid = models.CharField(max_length=50)
