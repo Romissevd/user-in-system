@@ -9,13 +9,22 @@
         Hello, user!
     {% endif %}
 {% endif %}
+
+{% if message %}
+    {{ message }}
+{% endif %}
+
+{% if time_error %}
+    {{ time_error }}
+{% endif %}
+
 {% if form %}
-    <form action="" method="post">
+    <form action="/login/" method="post">
         {% csrf_token %}
         <div class="field">
-            {{ form.last_name.errors }}
+            {{ form.first_name.errors }}
             <label id="id_last_name">Логин:</label>
-            {{ form.last_name }}
+            {{ form.first_name }}
         </div>
         <div class="field">
             {{ form.email.errors }}
