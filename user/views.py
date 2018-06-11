@@ -30,9 +30,9 @@ def login(request):
                                     'name': user_name,
                                     'message': message_for_site,
                                     })
-
-                User.objects.filter(email=email).update(last_login_date=datetime.now())
-                UuidUser.objects.filter(user_uuid__email=email).update(uuid=uuid)
+                else:
+                    User.objects.filter(email=email).update(last_login_date=datetime.now())
+                    UuidUser.objects.filter(user_uuid__email=email).update(uuid=uuid)
 
             except User.DoesNotExist:
                 first_name = user_data.get('first_name')
@@ -73,18 +73,28 @@ def login(request):
 def url(request):
     return redirect('/login/')
 
-def enter(request, uuid):
-    user = User.objects.get(uuiduser__uuid=uuid)
 
-    if (user.last_login_date + timedelta(minutes=1)) < timezone.now():
-        message_for_site = 'Время действия ссылки истекло. Выполните повторный вход.'
-        return render(request, 'login.html', {
-                        'message': message_for_site,
-                        'form': LoginForm(),
-                        })
-    message_for_site = 'Приветстуем на нашем сайте!'
-    return render(request, 'login.html', {
-                    'name': user.name,
-                    'message': message_for_site,
-                    })
+def enter(request, uuid):
+    info_dct = {}
+    try:
+        user = User.objects.get(uuiduser__uuid=uuid)
+        if (user.last_login_date + timedelta(minutes=5)) < timezone.now():
+            message_for_site = 'Время действия ссылки истекло. Выполните повторный вход.'
+            info_dct.update(message=message_for_site,
+                            form=LoginForm(),
+                            )
+        else:
+            uid = str(uuid4())
+            UuidUser.objects.filter(user_uuid__email=user.email).update(uuid=uid)
+            message_for_site = 'Приветстуем на нашем сайте!'
+            info_dct.update(message=message_for_site,
+                            name=user.name,
+                            )
+    except User.DoesNotExist:
+        message_for_site = 'Ссылка недействительна. Выполните повторный вход.'
+        info_dct.update(message=message_for_site,
+                        form=LoginForm(),
+                        )
+
+    return render(request, 'login.html', info_dct)
 
